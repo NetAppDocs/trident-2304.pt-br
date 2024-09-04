@@ -1,0 +1,28 @@
+---
+sidebar: sidebar 
+permalink: trident-get-started/quickstart.html 
+keywords: kubernetes cluster, simple installation, Kubernetes installation 
+summary: Se você acabou de começar a usar o Kubernetes, siga as instruções para instalar o Kubernetes para experimentá-lo. Essas instruções fornecem um cluster de nó único e bare-metal com o qual o Trident pode se integrar para fins de demonstração. 
+---
+= Experimente
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+O NetApp fornece uma imagem de laboratório pronta para uso que pode ser solicitada através link:https://www.netapp.com/us/try-and-buy/test-drive/index.aspx["Unidade de teste do NetApp"^]do .
+
+
+
+== Saiba mais sobre o Test Drive
+
+O Test Drive oferece um ambiente sandbox que inclui um cluster de Kubernetes de três nós e o Astra Trident instalado e configurado. É uma ótima maneira de se familiarizar com o Astra Trident e explorar seus recursos.
+
+Outra opção é ver o link:https://kubernetes.io/docs/setup/independent/install-kubeadm/["Guia de Instalação do kubeadm"] fornecido pelo Kubernetes.
+
+
+NOTE: Você não deve usar o cluster do Kubernetes criado usando essas instruções em produção. Use os guias de implantação de produção fornecidos pela distribuição para criar clusters prontos para produção.
+
+Se esta for a primeira vez que você estiver usando o Kubernetes, familiarize-se com os conceitos e as ferramentas link:https://kubernetes.io/docs/home/["aqui"^].

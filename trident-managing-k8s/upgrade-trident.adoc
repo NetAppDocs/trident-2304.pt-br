@@ -1,0 +1,132 @@
+---
+sidebar: sidebar 
+permalink: trident-managing-k8s/upgrade-trident.html 
+keywords: upgrade, trident, methods, operator, tridentctl, helm 
+summary: O Astra Trident segue uma cadência de lançamento trimestral, entregando quatro grandes lançamentos todos os anos. Cada nova versão é construída sobre as versões anteriores, fornecendo novos recursos e melhorias de desempenho, bem como correções de bugs e melhorias. Recomendamos que você atualize pelo menos uma vez por ano para aproveitar os novos recursos do Astra Trident. 
+---
+= Atualizar o Astra Trident
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+O Astra Trident segue uma cadência de lançamento trimestral, entregando quatro grandes lançamentos todos os anos. Cada nova versão é construída sobre as versões anteriores, fornecendo novos recursos e melhorias de desempenho, bem como correções de bugs e melhorias. Recomendamos que você atualize pelo menos uma vez por ano para aproveitar os novos recursos do Astra Trident.
+
+
+
+== Considerações antes da atualização
+
+Ao atualizar para a versão mais recente do Astra Trident, considere o seguinte:
+
+* Deve haver apenas uma instância do Astra Trident instalada em todos os namespaces em um determinado cluster do Kubernetes.
+* A partir do Trident 20,01, apenas a versão beta do https://kubernetes.io/docs/concepts/storage/volume-snapshots/["instantâneos de volume"^] é suportada. Os administradores do Kubernetes devem cuidar para fazer backup ou converter com segurança os objetos de snapshot alfa em beta para reter os snapshots alfa legados.
++
+** O CSI volume Snapshots agora é um recurso que é o GA, começando com o Kubernetes 1,20. Antes de atualizar, você deve remover CRDs de snapshot alfa usando `tridentctl obliviate alpha-snapshot-crd` para excluir as CRDs para a especificação de snapshot alfa.
+** A versão beta de snapshots de volume introduz um conjunto modificado de CRDs e um controlador de snapshot, que devem ser configurados antes de atualizar o Astra Trident.
+** Para obter detalhes, link:https://netapp.io/2020/01/30/alpha-to-beta-snapshots/["O que você precisa saber antes de atualizar o cluster do Kubernetes"^]consulte .
+
+
+* Todas as atualizações das versões 19,04 e anteriores exigem a migração dos metadados do Astra Trident próprios `etcd` para objetos CRD. Certifique-se de que verifica o link:https://docs.netapp.com/us-en/trident/earlier-versions.html["Documentação específica do seu lançamento do Astra Trident"] para compreender como funciona a atualização.
+* Ao atualizar, é importante que você forneça `parameter.fsType` o `StorageClasses` Astra Trident usado. Você pode excluir e recriar `StorageClasses` sem interromper volumes pré-existentes.
++
+** Este é um ** requisito** para aplicação de https://kubernetes.io/docs/tasks/configure-pod-container/security-context/["contextos de segurança"^] volumes SAN.
+** O diretório https://github.com/NetApp https://github.com/NetApp/Trident Trident/tree/master/Trident Trident-installer/sample-input[sample input] contém exemplos, como https://github.com/NetApp/Trident/blob/master/Trident-installer/sample-input/storage-class-samples/storage-class-[`storage-class-bronze-default.yaml`basic[`storage-class-basic.yaml.templ` Para obter mais informações, link:../trident-rn.html["Problemas conhecidos"]consulte .
+
+
+
+
+
+
+== Passo 1: Selecione uma versão
+
+As versões do Astra Trident seguem uma convenção de nomenclatura baseada em data `YY.MM`, onde "YY" é os últimos dois dígitos do ano e "MM" é o mês. Os lançamentos de ponto seguem uma `YY.MM.X` convenção, onde "X" é o nível de patch. Você selecionará a versão para a qual atualizar com base na versão da qual você está atualizando.
+
+* Você pode fazer uma atualização direta para qualquer versão de destino que esteja dentro de uma janela de quatro versões da versão instalada. Por exemplo, você pode atualizar para 23,04 a partir de 22,04 (incluindo quaisquer lançamentos de pontos, como 22.04.1) diretamente.
+* Se você tiver uma versão anterior, você deve executar uma atualização em várias etapas usando a documentação da respetiva versão para obter instruções específicas. Isso requer que você primeiro atualize para a versão mais recente que se encaixa na janela de quatro versões. Por exemplo, se você estiver executando o 18,07 e quiser atualizar para a versão 20,07, siga o processo de atualização em várias etapas conforme indicado abaixo:
++
+.. Primeiro upgrade de 18,07 para 19,07.
+.. Em seguida, atualize de 19,07 para 20,07.
+
+
+
+
+
+NOTE: Ao atualizar usando o operador Trident na Plataforma de contêiner OpenShift, você deve atualizar para o Trident 21.01.1 ou posterior. O operador Trident lançado com 21.01.0 contém um problema conhecido que foi corrigido no 21.01.1. Para obter mais detalhes, consulte https://github.com/NetApp/trident/issues/517["Detalhes do problema no GitHub"^] .
+
+
+
+== Passo 2: Determine o método de instalação original
+
+Geralmente, você deve atualizar usando o mesmo método usado para a instalação inicial, no entanto, você pode link:../trident-get-started/kubernetes-deploy.html#moving-between-installation-methods["mova entre os métodos de instalação"].
+
+Para determinar qual versão você usou para instalar originalmente o Astra Trident:
+
+. Use `kubectl get pods - trident` para examinar os pods.
++
+** Se não houver nenhum pod do operador, o Astra Trident foi instalado usando `tridentctl`o .
+** Se houver um pod do operador, o Astra Trident foi instalado usando o operador Trident manualmente ou usando o Helm.
+
+
+. Se houver um pod do operador, use `kubectl describe tproc trident` para determinar se o Astra Trident foi instalado usando o Helm.
++
+** Se houver uma etiqueta Helm, o Astra Trident foi instalado usando Helm.
+** Se não houver nenhuma etiqueta Helm, o Astra Trident foi instalado manualmente usando o operador Trident.
+
+
+
+
+
+
+== Passo 3: Selecione um método de atualização
+
+Há dois métodos para atualizar o Astra Trident.
+
+
+
+=== Quando atualizar usando o operador
+
+Você pode link:upgrade-operator.html["Atualize usando o operador Trident"] se:
+
+* Você instalou originalmente o Astra Trident usando o operador ou o `tridentctl`.
+* Você desinstalou o CSI Trident e os metadados da instalação persistem.
+* Você tem uma instalação do Astra Trident baseada em CSI. Todos os lançamentos de 19,07 em são baseados em CSI. Você pode examinar os pods no namespace do Trident para verificar sua versão.
++
+** A nomenclatura de POD em versões anteriores a 23,01 usa: `trident-csi-*`
+** A nomeação de POD em 23,01 e posteriores usa:
++
+*** `trident-controller-<generated id>` para o pod do controlador
+*** `trident-node-<operating system>-<generated id>` para os pods de nós
+*** `trident-operator-<generated id>` para o grupo de comandos do operador
+
+
+
+
+
+
+
+WARNING: Não utilize o operador para atualizar o Trident se estiver a utilizar uma `etcd` versão Trident baseada em -(19,04 ou anterior).
+
+
+
+=== Quando atualizar usando `tridentctl`
+
+Você pode  se você instalou originalmente o Astra Trident usando o 'tridenctl'.
+
+`tridentctl` O Astra Trident é o método convencional de instalação e oferece o máximo de opções para quem precisa de personalização complexa. Para obter mais detalhes, link:..trident-get-started/kubernetes-deploy.html#choose-your-installation-method["Escolha o método de instalação"]consulte .
+
+
+
+== Alterações ao operador
+
+O lançamento de 21,01 do Astra Trident introduziu mudanças na arquitetura do operador:
+
+* O operador está agora *com escopo de cluster*. Instâncias anteriores do operador Trident (versões 20,04 a 20,10) eram *com escopo de namespace*. Um operador com escopo de cluster é vantajoso pelas seguintes razões:
++
+** Responsabilidade dos recursos: A operadora agora gerencia recursos associados à instalação do Astra Trident no nível do cluster. Como parte da instalação do Astra Trident, o operador cria e mantém vários recursos `ownerReferences` usando o . Manter `ownerReferences` recursos com escopo de cluster pode lançar erros em certos distribuidores do Kubernetes, como o OpenShift. Isso é atenuado com um operador com escopo de cluster. Para auto-cura e correção de recursos do Trident, este é um requisito essencial.
+** Limpeza durante a desinstalação: Uma remoção completa do Astra Trident exigiria que todos os recursos associados fossem excluídos. Um operador com escopo de namespace pode ter problemas com a remoção de recursos com escopo de cluster (como o clusterRole, ClusterRoleBinding e PodSecurityPolicy) e levar a uma limpeza incompleta. Um operador com escopo de cluster elimina esse problema. Os usuários podem desinstalar completamente o Astra Trident e instalar novamente, se necessário.
+
+
+* `TridentProvisioner` Agora é substituído pelo `TridentOrchestrator` como recurso personalizado usado para instalar e gerenciar o Astra Trident. Além disso, um novo campo é introduzido à `TridentOrchestrator` especificação. Os usuários podem especificar que o namespace Trident deve ser instalado/atualizado usando o `spec.namespace` campo. Você pode dar uma olhada em um exemplo https://github.com/NetApp/trident/blob/stable/v21.01/deploy/crds/tridentorchestrator_cr.yaml["aqui"^].
+

@@ -1,0 +1,15 @@
+---
+sidebar: sidebar 
+permalink: trident-concepts/architecture.html 
+keywords: trident backend, AFF, FAS, ONTAP Select, Cloud, Amazon FSx for NetApp ONTAP, drivers, ONTAP drivers 
+summary: Saiba como o Astra Trident é executado em um cluster Kubernetes. 
+---
+= A arquitetura do Astra Trident
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Saiba como o Astra Trident é executado em um cluster Kubernetes.

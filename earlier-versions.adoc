@@ -1,0 +1,23 @@
+---
+sidebar: sidebar 
+permalink: earlier-versions.html 
+keywords: earlier versions, astra trident versions 
+summary: A documentação para versões anteriores do Astra Trident está disponível no caso de você não estar executando a versão mais recente. 
+---
+= Versões anteriores da documentação
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Se você não estiver executando o Astra Trident 23,04, a documentação das versões anteriores estará disponível com base link:https://mysupport.netapp.com/site/info/trident-support["Astra Trident lançamento e ciclo de vida do suporte"^]no .
+
+* https://docs.netapp.com/us-en/trident-2301/index.html["Astra Trident 23,01"^]
+* https://docs.netapp.com/us-en/trident-2210/index.html["Astra Trident 22,10"^]
+* https://docs.netapp.com/us-en/trident-2207/index.html["Astra Trident 22,07"^]
+* https://docs.netapp.com/us-en/trident-2204/index.html["Astra Trident 22,04"^]
+* https://docs.netapp.com/us-en/trident-2201/index.html["Astra Trident 22,01"^]
+* https://docs.netapp.com/us-en/trident-2110/index.html["Astra Trident 21,10"^]
+
